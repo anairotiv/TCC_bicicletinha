@@ -21,5 +21,3 @@ public class PessoaFisica : Entity
         Nome = nome;
     }
 }
-
-    

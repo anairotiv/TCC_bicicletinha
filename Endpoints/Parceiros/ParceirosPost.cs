@@ -61,28 +61,25 @@ public class ParceirosPost
             }
 
             await context.PessoasFisicas.AddAsync(pessoaFisica);
-            await context.SaveChangesAsync();
 
             return Results.Created($"/pessoaFisica/{pessoaFisica.Id}", pessoaFisica.Id);
 
         }
 
-        else if (parceirosRequest.Tipo == "PESSOA JURIDICA") {
-            var pessoaJuridica = new PessoaJuridica {
-                RazaoSocial = parceirosRequest.Nome_Razao,
-                CNPJ = parceirosRequest.CPF_CNPJ,
+        if (parceirosRequest.Tipo == "PESSOA JURIDICA") {
+            var pessoaJuridica = new PessoaJuridica (parceirosRequest.CPF_CNPJ, parceirosRequest.Nome_Razao) {
                 ParceiroId = parceiro.Id
-
             };
+            if (!pessoaJuridica.IsValid) {
 
-            context.PessoaJuridicas.Add(pessoaJuridica);
+                return Results.ValidationProblem(pessoaJuridica.Notifications.ConvertToProblemDetails());
+            }
+
+            await context.PessoaJuridicas.AddAsync(pessoaJuridica);
+
+            return Results.Created($"/pessoaFisica/{pessoaJuridica.Id}", pessoaJuridica.Id);
+
         }
-
-        else 
-        {
-            return Results.NotFound("O tipo de Pessoa deve ser informado: PESSOA FISICA OU PESSOA JURIDICA");
-        }
-
 
         context.Enderecos.Add(endereco);
         context.Contatos.Add(contato);
