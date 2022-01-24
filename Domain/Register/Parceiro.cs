@@ -18,4 +18,13 @@ public class Parceiro : Entity
 
     public IList<DocFinanceiro> Documentos { get; set; }
 
+    public Parceiro (Guid empresaId)
+    {
+        var contract = new Contract<Parceiro>();
+
+        CreatedOn = DateTime.Now;
+        EditedOn = DateTime.Now;
+        EmpresaId = empresaId;
+    }
+
 }

@@ -24,29 +24,26 @@ public class ParceirosPost
              context.
          } */
 
-        var endereco = new Endereco {
-            CEP = parceirosRequest.Cep,
-            Logradouro = parceirosRequest.Logradouro,
-            Numero = parceirosRequest.Numero,
-            Complemento = parceirosRequest.Complemento,
-            Bairro = parceirosRequest.Bairro,
-            Cidade = parceirosRequest.Cidade,
-            Estado = parceirosRequest.Estado,
-        };
 
-        var contato = new Contato {
-            TelCelular = parceirosRequest.TelCelular,
-            TelFixo = parceirosRequest.TelFixo,
-            Email = parceirosRequest.Email,
-        };
+        var endereco = new Endereco(parceirosRequest.Cep, parceirosRequest.Logradouro, parceirosRequest.Numero,
+                                    parceirosRequest.Complemento, parceirosRequest.Bairro, parceirosRequest.Cidade,
+                                    parceirosRequest.Estado);
+        if (!endereco.IsValid) 
+        {
+            return Results.ValidationProblem(endereco.Notifications.ConvertToProblemDetails());
+        }
 
 
-        var parceiro = new Parceiro {
+        var contato = new Contato(parceirosRequest.TelCelular, parceirosRequest.TelFixo, parceirosRequest.Email);
+
+        if (!contato.IsValid) 
+        {
+            return Results.ValidationProblem(contato.Notifications.ConvertToProblemDetails());
+        }    
+
+        var parceiro = new Parceiro (parceirosRequest.EmpresaID){
             EnderecoId = endereco.Id,
             ContatoId = contato.Id,
-            CreatedOn = DateTime.Now,
-            EditedOn = DateTime.Now,
-            EmpresaId = parceirosRequest.EmpresaID,
         };
 
         if (parceirosRequest.Tipo == "PESSOA FISICA") {
